@@ -59,7 +59,7 @@ module Mongoid
           end
 
           it 'finds by slug' do
-            Book.find('foo').should eql book
+            Book.find_by(slug: 'foo').should eql book
           end
         end
       end

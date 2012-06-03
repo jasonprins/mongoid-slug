@@ -6,8 +6,8 @@ require 'rspec'
 
 require 'mongoid_slug'
 
-Mongoid.configure do |c|
-  c.master = Mongo::Connection.new.db 'mongoid_slug_test'
+Mongoid.configure do |config|
+  config.connect_to('mongoid_slug_test')
 end
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
@@ -15,10 +15,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 RSpec.configure do |c|
   c.before(:each) do
     # Clean database.
-    Mongoid.master.collections.
-      find_all {|c| c.name !~ /system/ }.
-      each(&:drop_indexes).
-      each(&:remove)
+    Mongoid.purge!
 
     # Reload models to avoid side effects.
     Dir["#{File.dirname(__FILE__)}/models/*.rb"].each do |f|

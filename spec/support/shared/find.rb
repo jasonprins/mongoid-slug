@@ -1,6 +1,14 @@
 shared_examples 'find' do
+
+  let(:attribute)  { "#{document._slug.name}" }
+  let(:param) { document.to_param }
+
   it 'finds by slug' do
-    klass.find(document.to_param).should eql document
+    if document._slug.renamed?
+      klass.find_by(attribute.to_sym => "#{param}").should eql document
+    else
+      klass.find_by(slug: "#{param}").should eql document
+    end
   end
 
   it 'finds by id as string' do

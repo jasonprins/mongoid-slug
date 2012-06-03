@@ -58,30 +58,40 @@ module Mongoid
         end
 
         it 'does not define an index on the slug' do
-          Book.index_information.should_not have_key 'book_1'
+          Book.index_options.should_not have_key 'book_1'
         end
       end
 
       context 'with an index' do
         context 'when not scoped' do
           before do
-            Book.slug :title, :index => true
+            Book.slug :title
+            Book.index({ slug: 1 }, { unique: true })
             Book.create_indexes
           end
 
+          let(:options) do
+            Book.index_options[slug: 1]
+          end
+
           it 'defines a unique index on the slug' do
-            Book.index_information['slug_1']['unique'].should be_true
+            options.should eq(unique: true)
           end
         end
 
         context 'when scoped' do
           before do
-            Book.slug :title, :scope => :publisher, :index => true
+            Book.slug :title
+            Book.index({ slug: 1, publisher: 1}, { unique: true })
             Book.create_indexes
           end
 
+          let(:options) do
+            Book.index_options[slug: 1, publisher: 1]
+          end
+
           it 'defines a unique index on the slug and scope' do
-            Book.index_information['slug_1_publisher_1']['unique'].should be_true
+            options.should eq(unique: true)
           end
         end
       end

@@ -1,4 +1,4 @@
 class Publisher
   include Mongoid::Document
-  references_many :books
+  has_many :books
 end
